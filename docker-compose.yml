@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  service-a-php:
+    build: ./service-a
+    container_name: service-a-php
+    volumes:
+      - ./service-a:/var/www/html
+    expose:
+      - 9000
+
+  service-a-nginx:
+    image: nginx:alpine
+    container_name: service-a-nginx
+    ports:
+      - "8001:80"
+    volumes:
+      - ./service-a:/var/www/html
+      - ./service-a/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - service-a-php
+
+  service-b-php:
+    build: ./service-b
+    container_name: service-b-php
+    volumes:
+      - ./service-b:/var/www/html
+    expose:
+      - 9000
+
+  service-b-nginx:
+    image: nginx:alpine
+    container_name: service-b-nginx
+    ports:
+      - "8002:80"
+    volumes:
+      - ./service-b:/var/www/html
+      - ./service-b/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - service-b-php
